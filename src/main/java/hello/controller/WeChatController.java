@@ -1,0 +1,86 @@
+package hello.controller;
+
+import com.alibaba.fastjson.JSONObject;
+import hello.entity.UserEntity;
+import hello.service.UserRepository;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+@RestController
+public class WeChatController {
+    @Autowired
+    private UserRepository userRepository;
+
+    @Value("${cty.appid}")
+    private String appid;
+    @Value("${cty.appSecret}")
+    private String appSecret;
+
+    @PostMapping("/wx_login")
+    private Map<String, Object> wxLogin(@RequestBody JSONObject wxJSON) {
+
+        Map<String, Object> errorResponse = new LinkedHashMap<String, Object>();
+        errorResponse.put("status", "error");
+        JSONObject jsonResult;
+
+        String url = "https://api.weixin.qq.com/sns/jscode2session";
+        url += "?appid=" + appid + "&secret=" + appSecret +
+                "&js_code=" + wxJSON.getString("js_code") +
+                "&grant_type=" + "uthorization_code";
+
+        try {
+            // 建立 HTTP 客户端
+            CloseableHttpClient client = HttpClients.createDefault();
+            // 建立 Get 请求
+            HttpGet getRequest = new HttpGet(url);
+            // 发送 Get 请求并且保存返回结果
+            HttpResponse response = client.execute(getRequest);
+
+            // SC_OK 即为 200
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                // 解析返回结果到字符串
+                String strResult = EntityUtils.toString(response.getEntity());
+                // 字符串再解析为 JSON
+                jsonResult = JSONObject.parseObject(strResult);
+                if (jsonResult.getString("errmsg") != null) {
+                    errorResponse.put("message", jsonResult.getString("errmsg"));
+                    return errorResponse;
+                }
+            }
+            else {
+                errorResponse.put("message", "http error!");
+                return errorResponse;
+            }
+        } catch (IOException e) {
+            errorResponse.put("message", "e");
+            return errorResponse;
+        }
+
+        // todo:再就是要生成 token 发回去了
+        UserEntity user = userRepository.findFirstByWxID(jsonResult.getString("openid"));
+        if (user == null) {
+            user = new UserEntity();
+            user.setWxID(jsonResult.getString("openid"));
+            userRepository.save(user);
+        }
+        String token = user.generateAuthToken(jsonResult.getString("openid"));
+        Map<String, Object> response = new LinkedHashMap<String, Object>();
+        response.put("status", "success");
+        response.put("token", token);
+        return response;
+    }
+}
