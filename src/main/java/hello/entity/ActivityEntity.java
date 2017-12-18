@@ -19,10 +19,10 @@ public class ActivityEntity {
     private Date start_time;
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
-    private Date cred_at;
+    private Date credAt;
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
-    private Date last_modified;
+    private Date lastModified;
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "author_id")
@@ -75,11 +75,11 @@ public class ActivityEntity {
         this.start_time = start_time;
     }
 
-    public Date getCred_at() {
-        return cred_at;
+    public Date getCredAt() {
+        return credAt;
     }
 
-    public Date getLast_modified() {
-        return last_modified;
+    public Date getLastModified() {
+        return lastModified;
     }
 }

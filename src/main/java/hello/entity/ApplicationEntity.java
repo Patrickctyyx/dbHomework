@@ -1,7 +1,10 @@
 package hello.entity;
 
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "application")
@@ -17,6 +20,10 @@ public class ApplicationEntity {
     private String phone;
     private String email;
     private String introduction;
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
+    private Date credAt;
+    private String status = "pending";
 
     public ApplicationEntity() {
     }
@@ -101,5 +108,17 @@ public class ApplicationEntity {
 
     public void setIntroduction(String introduction) {
         this.introduction = introduction;
+    }
+
+    public Date getCredAt() {
+        return credAt;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

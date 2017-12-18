@@ -15,13 +15,13 @@ public class NoticeEntity {
     private Long id;
     private String theme;
     private String content;
-    private String target_dep;
+    private String targetDep;
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
-    private Date cred_at;
+    private Date credAt;
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
-    private Date last_modified;
+    private Date lastModified;
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "author_id")
@@ -30,10 +30,10 @@ public class NoticeEntity {
     public NoticeEntity() {
     }
 
-    public NoticeEntity(String theme, String content, String target_dep) {
+    public NoticeEntity(String theme, String content, String targetDep) {
         this.theme = theme;
         this.content = content;
-        this.target_dep = target_dep;
+        this.targetDep = targetDep;
     }
 
     public Long getId() {
@@ -56,19 +56,19 @@ public class NoticeEntity {
         this.content = content;
     }
 
-    public String getTarget_dep() {
-        return target_dep;
+    public String getTargetDep() {
+        return targetDep;
     }
 
-    public void setTarget_dep(String target_dep) {
-        this.target_dep = target_dep;
+    public void setTargetDep(String target_dep) {
+        this.targetDep = targetDep;
     }
 
-    public Date getCred_at() {
-        return cred_at;
+    public Date getCredAt() {
+        return credAt;
     }
 
-    public Date getLast_modified() {
-        return last_modified;
+    public Date getLastModified() {
+        return lastModified;
     }
 }

@@ -9,5 +9,6 @@ public interface ApplicationRepository extends CrudRepository<ApplicationEntity,
     ApplicationEntity findFirstById(Long id);
     ApplicationEntity findFirstByPhone(String phone);
     ApplicationEntity findFirstByEmail(String email);
-    List <ApplicationEntity> findByName(String name);
+    List<ApplicationEntity> findByName(String name);
+    List<ApplicationEntity> findAllByOrderByCredAtDesc();
 }
