@@ -53,7 +53,9 @@ public class ApplicationController {
                 applyJSON.getString("introduction")
         );
         if (applicationRepository.findFirstByPhone(applyJSON.getString("phone")) != null ||
-                applicationRepository.findFirstByEmail(applyJSON.getString("Email")) != null) {
+                applicationRepository.findFirstByEmail(applyJSON.getString("Email")) != null ||
+                userRepository.findFirstByPhone(applyJSON.getString("phone")) != null ||
+                userRepository.findFirstByEmail(applyJSON.getString("email")) != null) {
             response.put("status", "error");
             response.put("message", "Information already exists!");
             return response;
@@ -149,6 +151,15 @@ public class ApplicationController {
             }
             else {
                 apply.setStatus("proved");
+                UserEntity newUser = new UserEntity();
+                newUser.setName(apply.getName());
+                newUser.setGrade(apply.getGrade());
+                newUser.setCollege(apply.getGrade());
+                newUser.setMajor(apply.getMajor());
+                newUser.setDepartment(apply.getDepartment());
+                newUser.setPhone(apply.getPhone());
+                newUser.setEmail(apply.getEmail());
+                userRepository.save(newUser);
             }
         }
 

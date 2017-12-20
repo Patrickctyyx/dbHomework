@@ -12,6 +12,8 @@ import javax.sql.DataSource;
 @SpringBootApplication
 public class HelloWorld {
 
+    // todo: 建立社团表
+
     public static void main(String[] args) throws Exception {
         SpringApplication.run(HelloWorld.class, args);
     }

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -81,6 +80,57 @@ public class WeChatController {
         Map<String, Object> response = new LinkedHashMap<String, Object>();
         response.put("status", "success");
         response.put("token", token);
+        return response;
+    }
+
+    @PostMapping("/bind_account")
+    private Map<String, Object> bindAccount (@RequestBody JSONObject infoJSON) {
+        Map<String, Object> response = new LinkedHashMap<String, Object>();
+
+        String token = infoJSON.getString("token");
+        if (token == null) {
+            response.put("status", "error");
+            response.put("message", "lacking token!");
+            return response;
+        }
+
+        String wxID = UserEntity.checkAuthToken(token);
+        if (wxID.length() == 0) {
+            response.put("status", "error");
+            response.put("message", "invalid token!");
+            return response;
+        }
+
+        UserEntity curUser = userRepository.findFirstByWxID(wxID);
+
+        UserEntity user;
+        if (infoJSON.getString("phone") != null) {
+            user = userRepository.findFirstByPhone(infoJSON.getString("phone"));
+            if (user == null) {
+                response.put("status", "error");
+                response.put("message", "invalid phone!");
+                return response;
+            }
+        }
+        else if (infoJSON.getString("email") != null) {
+            user = userRepository.findFirstByEmail(infoJSON.getString("email"));
+            if (user == null) {
+                response.put("status", "error");
+                response.put("message", "invalid email!");
+                return response;
+            }
+        }
+        else {
+            response.put("status", "error");
+            response.put("message", "lacking information!");
+            return response;
+        }
+
+        curUser.setWxID(wxID);
+        userRepository.delete(curUser);
+        userRepository.save(user);
+
+        response.put("status", "success");
         return response;
     }
 }
