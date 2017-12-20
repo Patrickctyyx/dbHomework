@@ -49,6 +49,10 @@ public class UserEntity {
     @JoinColumn(name = "author_id")
     private Set<ActivityEntity> activities = new HashSet<ActivityEntity>();
 
+    @OneToMany(mappedBy = "user")
+    private Set<UserClubEntity> userClubs = new HashSet<UserClubEntity>();
+
+
     public UserEntity() {
     }
 
@@ -174,6 +178,14 @@ public class UserEntity {
 
     public void setActivities(Set<ActivityEntity> activities) {
         this.activities = activities;
+    }
+
+    public Set<UserClubEntity> getUserClubs() {
+        return userClubs;
+    }
+
+    public void setUserClubs(Set<UserClubEntity> userClubs) {
+        this.userClubs = userClubs;
     }
 
     @Transient

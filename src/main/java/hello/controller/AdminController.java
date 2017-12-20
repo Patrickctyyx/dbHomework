@@ -2,8 +2,12 @@ package hello.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import hello.entity.ApplicationEntity;
+import hello.entity.ClubEntity;
+import hello.entity.UserClubEntity;
 import hello.entity.UserEntity;
 import hello.service.ApplicationRepository;
+import hello.service.ClubRepository;
+import hello.service.UserClubRepository;
 import hello.service.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +21,10 @@ import java.util.Map;
 public class AdminController {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserClubRepository userClubRepository;
+    @Autowired
+    private ClubRepository clubRepository;
 
     private Integer isAdmin(JSONObject paramJSON) {
         String token = paramJSON.getString("token");
@@ -29,8 +37,17 @@ public class AdminController {
             return 3;
         }
 
+        Long clubID = paramJSON.getLong("club_id");
+        if (clubID == null) {
+            return 5;
+        }
+
         UserEntity user = userRepository.findFirstByWxID(wxID);
-        if (user.getUserIdentity().equals("officer")) {
+        ClubEntity club = clubRepository.findFirstById(clubID);
+        UserClubEntity userClub = userClubRepository.findFirstByUserAndClub(
+                user, club
+        );
+        if (userClub.getUserIdentity().equals("officer")) {
             return 4;
         }
 
@@ -61,6 +78,12 @@ public class AdminController {
             return response;
         }
 
+        if (status == 5) {
+            response.put("status", "error");
+            response.put("message", "club does not exist!");
+            return response;
+        }
+
         Long id = reviseJSON.getLong("id");
         String newIdentity = reviseJSON.getString("new_identity");
         if (id == null || newIdentity == null) {
@@ -69,14 +92,17 @@ public class AdminController {
             return response;
         }
 
-        UserEntity revisedUser = userRepository.findFirstById(id);
-        if (revisedUser == null) {
+        UserClubEntity revisedUserClub = userClubRepository.findFirstByUserAndClub(
+                userRepository.findFirstById(id),
+                clubRepository.findFirstById(reviseJSON.getLong("club_id"))
+        );
+        if (revisedUserClub == null) {
             response.put("status", "error");
             response.put("message", "user do not exist!");
             return response;
         }
-        revisedUser.setUserIdentity(newIdentity);
-        userRepository.save(revisedUser);
+        revisedUserClub.setUserIdentity(newIdentity);
+        userClubRepository.save(revisedUserClub);
         response.put("status", "ok");
         return response;
     }

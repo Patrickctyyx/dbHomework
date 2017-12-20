@@ -1,7 +1,9 @@
 package hello.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import hello.entity.ClubEntity;
 import hello.entity.UserEntity;
+import hello.service.ClubRepository;
 import hello.service.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,8 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ClubRepository clubRepository;
 
     @PostMapping("/new_user")
     public Map<String, Object> newUser(@RequestBody JSONObject userJSON) {
@@ -35,10 +39,11 @@ public class UserController {
         userRepository.findFirstByEmail(userJSON.getString("email")) != null) {
             response.put("status", "error");
             response.put("message", "information already exists!");
+            return response;
         }
         userRepository.save(user);
 
-        user = userRepository.findFirstByPhone(userJSON.getString("phone"));
+        // user = userRepository.findFirstByPhone(userJSON.getString("phone"));
 
 
         response.put("status", "success");
@@ -55,10 +60,11 @@ public class UserController {
         if (user == null) {
             response.put("status", "error");
             response.put("message", "user does not exist!");
+            return response;
         }
 
         response.put("status", "success");
-        response.put("id", user.getId());
+        response.put("id", id);
         response.put("name", user.getName());
         response.put("college", user.getCollege());
         response.put("major", user.getMajor());
@@ -67,6 +73,8 @@ public class UserController {
         response.put("qq", user.getQq());
         response.put("wechat", user.getWechat());
         response.put("email", user.getEmail());
+        // todo: 不知道这里返回的是什么
+        response.put("joined_club", user.getUserClubs());
 
         return response;
     }

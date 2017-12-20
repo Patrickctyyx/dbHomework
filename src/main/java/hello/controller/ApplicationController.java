@@ -3,8 +3,12 @@ package hello.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import hello.entity.ApplicationEntity;
+import hello.entity.ClubEntity;
+import hello.entity.UserClubEntity;
 import hello.entity.UserEntity;
 import hello.service.ApplicationRepository;
+import hello.service.ClubRepository;
+import hello.service.UserClubRepository;
 import hello.service.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +21,10 @@ public class ApplicationController {
     private ApplicationRepository applicationRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ClubRepository clubRepository;
+    @Autowired
+    private UserClubRepository userClubRepository;
 
     @PostMapping("/new_apply")
     public Map<String, Object> newApply(@RequestBody JSONObject applyJSON) {
@@ -28,6 +36,7 @@ public class ApplicationController {
                 "grade",
                 "college",
                 "major",
+                "club_name",
                 "department",
                 "phone",
                 "email",
@@ -41,6 +50,13 @@ public class ApplicationController {
                 return response;
             }
         }
+
+        ClubEntity club = clubRepository.findFirstByName(applyJSON.getString("club_name"));
+        if (club == null) {
+            response.put("status", "error");
+            response.put("message", "club do not exists!");
+            return response;
+        }
         // todo:对传入进来的参数进行类型检查
         ApplicationEntity apply = new ApplicationEntity(
                 applyJSON.getString("name"),
@@ -50,14 +66,15 @@ public class ApplicationController {
                 applyJSON.getString("department"),
                 applyJSON.getString("phone"),
                 applyJSON.getString("email"),
-                applyJSON.getString("introduction")
+                applyJSON.getString("introduction"),
+                club
         );
         if (applicationRepository.findFirstByPhone(applyJSON.getString("phone")) != null ||
                 applicationRepository.findFirstByEmail(applyJSON.getString("Email")) != null ||
                 userRepository.findFirstByPhone(applyJSON.getString("phone")) != null ||
                 userRepository.findFirstByEmail(applyJSON.getString("email")) != null) {
             response.put("status", "error");
-            response.put("message", "Information already exists!");
+            response.put("message", "information already exists!");
             return response;
         }
 
@@ -70,10 +87,14 @@ public class ApplicationController {
         return response;
     }
 
-    @GetMapping("/applies")
-    public List<Map<String, Object>> showApplies() {
-        List<ApplicationEntity> applications = applicationRepository.findAllByOrderByCredAtDesc();
+    @GetMapping("/applies/{club_name}")
+    public List<Map<String, Object>> showApplies(@PathVariable String club_name) {
         List<Map<String, Object>> resultList = new LinkedList<Map<String, Object>>();
+        ClubEntity club = clubRepository.findFirstByName(club_name);
+        if (club == null) {
+            return resultList;
+        }
+        List<ApplicationEntity> applications = applicationRepository.findByClubOrderByCredAtDesc(club);
         for (ApplicationEntity apply: applications) {
             Map<String, Object> applyMap = new LinkedHashMap<String, Object>();
             applyMap.put("id", apply.getId());
@@ -112,6 +133,7 @@ public class ApplicationController {
         applyMap.put("phone", apply.getPhone());
         applyMap.put("email", apply.getEmail());
         applyMap.put("introduction", apply.getIntroduction());
+        applyMap.put("club_name", apply.getClub().getName());
         applyMap.put("cred_at", apply.getCredAt());
         return applyMap;
     }
@@ -126,6 +148,13 @@ public class ApplicationController {
             return response;
         }
 
+        Long clubID = handleResultJSON.getLong("club_id");
+        if (clubID == null) {
+            response.put("status", "error");
+            response.put("message", "lacking club id!");
+            return response;
+        }
+
         String wxID = UserEntity.checkAuthToken(token);
         if (wxID.length() == 0) {
             response.put("status", "error");
@@ -134,7 +163,11 @@ public class ApplicationController {
         }
 
         UserEntity user = userRepository.findFirstByWxID(wxID);
-        if (user.getUserIdentity().equals("officer")) {
+        ClubEntity club = clubRepository.findFirstById(clubID);
+        UserClubEntity userClub = userClubRepository.findFirstByUserAndClub(
+                user, club
+        );
+        if (userClub.getUserIdentity().equals("officer")) {
             response.put("status", "error");
             response.put("message", "permission denied!");
             return response;
@@ -151,6 +184,7 @@ public class ApplicationController {
             }
             else {
                 apply.setStatus("proved");
+
                 UserEntity newUser = new UserEntity();
                 newUser.setName(apply.getName());
                 newUser.setGrade(apply.getGrade());
@@ -160,6 +194,12 @@ public class ApplicationController {
                 newUser.setPhone(apply.getPhone());
                 newUser.setEmail(apply.getEmail());
                 userRepository.save(newUser);
+
+                UserClubEntity newUserClub = new UserClubEntity();
+                newUserClub.setClub(club);
+                // todo: 不知道这里能不能直接这样得到 id
+                newUserClub.setUser(newUser);
+                userClubRepository.save(newUserClub);
             }
         }
 

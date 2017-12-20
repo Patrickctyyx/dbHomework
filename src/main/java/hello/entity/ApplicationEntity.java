@@ -25,12 +25,17 @@ public class ApplicationEntity {
     private Date credAt;
     private String status = "pending";
 
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "apply_id")
+    private ClubEntity club;
+
     public ApplicationEntity() {
     }
 
     public ApplicationEntity(
             String name, String grade, String college, String major,
-            String department, String phone, String email, String introduction
+            String department, String phone, String email,
+            String introduction, ClubEntity club
     ) {
         this.name = name;
         this.grade = grade;
@@ -40,6 +45,7 @@ public class ApplicationEntity {
         this.phone = phone;
         this.email = email;
         this.introduction = introduction;
+        this.club = club;
     }
 
     public Long getId() {
@@ -120,5 +126,13 @@ public class ApplicationEntity {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public ClubEntity getClub() {
+        return club;
+    }
+
+    public void setClub(ClubEntity club) {
+        this.club = club;
     }
 }
