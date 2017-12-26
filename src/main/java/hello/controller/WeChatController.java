@@ -29,7 +29,7 @@ public class WeChatController {
     @Value("${cty.appSecret}")
     private String appSecret;
 
-    @PostMapping("/wx_login")
+    @PostMapping("/wxlogin")
     private Map<String, Object> wxLogin(@RequestBody JSONObject wxJSON) {
 
         Map<String, Object> errorResponse = new LinkedHashMap<String, Object>();
@@ -69,7 +69,6 @@ public class WeChatController {
             return errorResponse;
         }
 
-        // todo:再就是要生成 token 发回去了
         UserEntity user = userRepository.findFirstByWxID(jsonResult.getString("openid"));
         if (user == null) {
             user = new UserEntity();

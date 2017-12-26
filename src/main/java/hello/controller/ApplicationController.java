@@ -81,13 +81,12 @@ public class ApplicationController {
         applicationRepository.save(apply);
         apply = applicationRepository.findFirstByPhone(applyJSON.getString("phone"));
         System.out.println(apply);
-        response.put("status", "successful");
-        response.put("message", "Applied successfully!");
+        response.put("status", "success");
         response.put("id", apply.getId());
         return response;
     }
 
-    @GetMapping("/applies/{club_name}")
+    @GetMapping("/applications/{club_name}")
     public List<Map<String, Object>> showApplies(@PathVariable String club_name) {
         List<Map<String, Object>> resultList = new LinkedList<Map<String, Object>>();
         ClubEntity club = clubRepository.findFirstByName(club_name);
@@ -113,7 +112,7 @@ public class ApplicationController {
         return resultList;
     }
 
-    @GetMapping("/applies/{id}")
+    @GetMapping("/applications/{id}")
     public Map<String, Object> getApply(@PathVariable Long id) {
         ApplicationEntity apply = applicationRepository.findFirstById(id);
         Map<String, Object> applyMap = new LinkedHashMap<String, Object>();

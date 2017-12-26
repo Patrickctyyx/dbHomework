@@ -133,13 +133,13 @@ public class UserController {
         return response;
     }
 
-    @PostMapping("/test_par")
-    public Map<String, Object> testPar(UserEntity user) {
-        // 这样的参数就只能识别 form-data，而其他的都不能识别了
-        System.out.println(user.getCollege());
-        System.out.println(user.getDepartment());
-        Map<String, Object> response = new LinkedHashMap<String, Object>();
-        response.put("message", "success!");
-        return response;
-    }
+//    @PostMapping("/test_par")
+//    public Map<String, Object> testPar(UserEntity user) {
+//        // 这样的参数就只能识别 form-data，而其他的都不能识别了
+//        System.out.println(user.getCollege());
+//        System.out.println(user.getDepartment());
+//        Map<String, Object> response = new LinkedHashMap<String, Object>();
+//        response.put("message", "success!");
+//        return response;
+//    }
 }
