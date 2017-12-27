@@ -1,6 +1,8 @@
 package hello.controller;
 
+import hello.entity.ActivityEntity;
 import hello.entity.ClubEntity;
+import hello.service.ActivityRepository;
 import hello.service.ClubRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,8 @@ import java.util.Map;
 public class ClubController {
     @Autowired
     private ClubRepository clubRepository;
+    @Autowired
+    private ActivityRepository activityRepository;
 
     // 社团的创建的话还是直接由 DBA 来进行创建吧
 
@@ -56,5 +60,31 @@ public class ClubController {
         return clubMap;
     }
 
-    // todo: 查看某个社团中的所有活动/通知
+    @GetMapping("/activities/{id}")
+    public List<Map<String, Object>> showClubs(@PathVariable Long id) {
+        List<Map<String, Object>> resultList = new LinkedList<Map<String, Object>>();
+
+        ClubEntity club = clubRepository.findFirstById(id);
+        if (club == null) {
+            Map<String, Object> response = new LinkedHashMap<String, Object>();
+            response.put("status", "error");
+            response.put("message", "club does not exist!");
+            resultList.add(response);
+            return resultList;
+        }
+
+        List<ActivityEntity> activities = activityRepository.findAllByOrderByLastModifiedDesc();
+        for (ActivityEntity activity: activities) {
+            Map<String, Object> activityMap = new LinkedHashMap<String, Object>();
+            activityMap.put("id", activity.getId());
+            activityMap.put("theme", activity.getTheme());
+            activityMap.put("content", activity.getContent());
+            activityMap.put("start_time", activity.getStart_time());
+            activityMap.put("creator_id", activity.getUser().getId());
+            activityMap.put("club_id", activity.getClub().getId());
+            activityMap.put("last_modified", activity.getLastModified());
+            resultList.add(activityMap);
+        }
+        return resultList;
+    }
 }

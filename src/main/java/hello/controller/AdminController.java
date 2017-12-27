@@ -1,14 +1,8 @@
 package hello.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import hello.entity.ApplicationEntity;
-import hello.entity.ClubEntity;
-import hello.entity.UserClubEntity;
-import hello.entity.UserEntity;
-import hello.service.ApplicationRepository;
-import hello.service.ClubRepository;
-import hello.service.UserClubRepository;
-import hello.service.UserRepository;
+import hello.entity.*;
+import hello.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +19,8 @@ public class AdminController {
     private UserClubRepository userClubRepository;
     @Autowired
     private ClubRepository clubRepository;
+    @Autowired
+    private ActivityRepository activityRepository;
 
     private Integer isAdmin(JSONObject paramJSON) {
         String token = paramJSON.getString("token");
@@ -44,6 +40,9 @@ public class AdminController {
 
         UserEntity user = userRepository.findFirstByWxID(wxID);
         ClubEntity club = clubRepository.findFirstById(clubID);
+        if (user == null || club == null) {
+            return 4;
+        }
         UserClubEntity userClub = userClubRepository.findFirstByUserAndClub(
                 user, club
         );
@@ -107,5 +106,56 @@ public class AdminController {
         return response;
     }
 
-    // todo: 管理员发布活动/通知
+    @PostMapping("/new_activity")
+    public Map<String, Object> newActivity(@RequestBody JSONObject activityJSON) {
+        Map<String, Object> response = new LinkedHashMap<String, Object>();
+
+        Integer status = isAdmin(activityJSON);
+
+        if (status == 2) {
+            response.put("status", "error");
+            response.put("message", "lacking token!");
+            return response;
+        }
+
+        if (status == 3) {
+            response.put("status", "error");
+            response.put("message", "invalid token!");
+            return response;
+        }
+
+        if (status == 4) {
+            response.put("status", "error");
+            response.put("message", "permission denied!");
+            return response;
+        }
+
+        if (status == 5) {
+            response.put("status", "error");
+            response.put("message", "club does not exist!");
+            return response;
+        }
+
+        String token = activityJSON.getString("token");
+        String wxID = UserEntity.checkAuthToken(token);
+        UserEntity user = userRepository.findFirstByWxID(wxID);
+        Long clubID = activityJSON.getLong("club_id");
+        ClubEntity club = clubRepository.findFirstById(clubID);
+
+        ActivityEntity activity = new ActivityEntity();
+        activity.setTheme(activityJSON.getString("theme"));
+        activity.setContent(activityJSON.getString("content"));
+        activity.setStart_time(activityJSON.getTimestamp("start_time"));
+        activity.setTarget_dep(activityJSON.getString("target_dep"));
+        activity.setClub(club);
+        activity.setUser(user);
+
+        activityRepository.save(activity);
+
+        response.put("status", "success");
+        response.put("id", activity.getId());
+        return response;
+    }
+
+    // todo: 管理员修改活动
 }

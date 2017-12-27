@@ -32,6 +32,8 @@ public class ActivityEntity {
     @JoinColumn(name = "club_id")
     private ClubEntity club;
 
+    // todo: 需不需要给活动加上状态？
+
     public ActivityEntity() {
     }
 
