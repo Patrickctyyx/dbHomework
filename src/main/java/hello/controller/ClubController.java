@@ -23,7 +23,7 @@ public class ClubController {
     public List<Map<String, Object>> showClubs() {
         List<Map<String, Object>> resultList = new LinkedList<Map<String, Object>>();
 
-        List<ClubEntity> clubs = clubRepository.findAllByOrOrderByName();
+        List<ClubEntity> clubs = clubRepository.findAllByOrderByName();
         for (ClubEntity club: clubs) {
             Map<String, Object> clubMap = new LinkedHashMap<String, Object>();
             clubMap.put("id", club.getId());
@@ -55,4 +55,6 @@ public class ClubController {
         clubMap.put("image_url", club.getImageUrl());
         return clubMap;
     }
+
+    // todo: 查看某个社团中的所有活动/通知
 }

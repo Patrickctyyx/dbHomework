@@ -20,6 +20,9 @@ public class ClubEntity {
     @OneToMany(mappedBy = "club")
     private Set<UserClubEntity> userClubs = new HashSet<UserClubEntity>();
 
+    @OneToMany
+    @JoinColumn(name = "club_id")
+    private Set<ActivityEntity> activities = new HashSet<ActivityEntity>();
 
     @OneToMany
     @JoinColumn(name = "apply_id")

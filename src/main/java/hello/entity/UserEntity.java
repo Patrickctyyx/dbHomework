@@ -35,15 +35,12 @@ public class UserEntity {
     private String wechat;
     @Column(unique = true)
     private String email;
+    private String introduction;
     @JsonIgnore
     private String wxID;
 
     @Transient
     private static byte[] sharedSecret;
-
-    @OneToMany
-    @JoinColumn(name = "author_id")
-    private Set<NoticeEntity> notices = new HashSet<NoticeEntity>();
 
     @OneToMany
     @JoinColumn(name = "author_id")
@@ -164,12 +161,12 @@ public class UserEntity {
         this.wxID = wxID;
     }
 
-    public Set<NoticeEntity> getNotices() {
-        return notices;
+    public String getIntroduction() {
+        return introduction;
     }
 
-    public void setNotices(Set<NoticeEntity> notices) {
-        this.notices = notices;
+    public void setIntroduction(String introduction) {
+        this.introduction = introduction;
     }
 
     public Set<ActivityEntity> getActivities() {

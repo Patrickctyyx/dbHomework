@@ -8,5 +8,5 @@ import java.util.List;
 public interface ClubRepository extends CrudRepository<ClubEntity, Long> {
     ClubEntity findFirstById(Long id);
     ClubEntity findFirstByName(String name);
-    List<ClubEntity> findAllByOrOrderByName();
+    List<ClubEntity> findAllByOrderByName();
 }

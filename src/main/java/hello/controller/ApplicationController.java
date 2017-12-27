@@ -101,6 +101,7 @@ public class ApplicationController {
             applyMap.put("name", apply.getName());
             applyMap.put("grade", apply.getGrade());
             applyMap.put("college", apply.getCollege());
+            applyMap.put("major", apply.getMajor());
             applyMap.put("department", apply.getDepartment());
             applyMap.put("phone", apply.getPhone());
             applyMap.put("email", apply.getEmail());
@@ -128,6 +129,7 @@ public class ApplicationController {
         applyMap.put("name", apply.getName());
         applyMap.put("grade", apply.getGrade());
         applyMap.put("college", apply.getCollege());
+        applyMap.put("major", apply.getMajor());
         applyMap.put("department", apply.getDepartment());
         applyMap.put("phone", apply.getPhone());
         applyMap.put("email", apply.getEmail());
@@ -187,11 +189,12 @@ public class ApplicationController {
                 UserEntity newUser = new UserEntity();
                 newUser.setName(apply.getName());
                 newUser.setGrade(apply.getGrade());
-                newUser.setCollege(apply.getGrade());
+                newUser.setCollege(apply.getCollege());
                 newUser.setMajor(apply.getMajor());
                 newUser.setDepartment(apply.getDepartment());
                 newUser.setPhone(apply.getPhone());
                 newUser.setEmail(apply.getEmail());
+                newUser.setIntroduction(apply.getIntroduction());
                 userRepository.save(newUser);
 
                 UserClubEntity newUserClub = new UserClubEntity();

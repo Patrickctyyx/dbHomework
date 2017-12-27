@@ -63,9 +63,9 @@ public class UserController {
             return response;
         }
 
-        response.put("status", "success");
         response.put("id", id);
         response.put("name", user.getName());
+        response.put("grade", user.getGrade());
         response.put("college", user.getCollege());
         response.put("major", user.getMajor());
         response.put("department", user.getDepartment());
@@ -73,6 +73,7 @@ public class UserController {
         response.put("qq", user.getQq());
         response.put("wechat", user.getWechat());
         response.put("email", user.getEmail());
+        response.put("introduction", user.getIntroduction());
         // todo: 不知道这里返回的是什么
         response.put("joined_club", user.getUserClubs());
 
@@ -126,6 +127,7 @@ public class UserController {
             return response;
         }
         user.setPhone(userinfoJSON.getString("phone"));
+        user.setIntroduction(userinfoJSON.getString("introduction"));
 
         userRepository.save(user);
         response.put("status", "success");

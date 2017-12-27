@@ -28,6 +28,10 @@ public class ActivityEntity {
     @JoinColumn(name = "author_id")
     private UserEntity user;
 
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "club_id")
+    private ClubEntity club;
+
     public ActivityEntity() {
     }
 
@@ -81,5 +85,21 @@ public class ActivityEntity {
 
     public Date getLastModified() {
         return lastModified;
+    }
+
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
+    public ClubEntity getClub() {
+        return club;
+    }
+
+    public void setClub(ClubEntity club) {
+        this.club = club;
     }
 }

@@ -106,4 +106,6 @@ public class AdminController {
         response.put("status", "ok");
         return response;
     }
+
+    // todo: 管理员发布活动/通知
 }
