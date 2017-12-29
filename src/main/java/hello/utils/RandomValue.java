@@ -15,7 +15,7 @@ public class RandomValue {
     private static String boy="伟刚勇毅俊峰强军平保东文辉力明永健世广志义兴良海山仁波宁贵福生龙元全国胜学祥才发武新利清飞彬富顺信子杰涛昌成康星光天达安岩中茂进林有坚和彪博诚先敬震振壮会思群豪心邦承乐绍功松善厚庆磊民友裕河哲江超浩亮政谦亨奇固之轮翰朗伯宏言若鸣朋斌梁栋维启克伦翔旭鹏泽晨辰士以建家致树炎德行时泰盛雄琛钧冠策腾楠榕风航弘";
     private static final String[] email_suffix="@gmail.com,@yahoo.com,@msn.com,@hotmail.com,@aol.com,@ask.com,@live.com,@qq.com,@0355.net,@163.com,@163.net,@263.net,@3721.net,@yeah.net,@googlemail.com,@126.com,@sina.com,@sohu.com,@yahoo.com.cn".split(",");
     private static final String[] collegeMajor_suffix = "信息学院/计算机科学与技术,外国语学院/商务英语,经济学院/经济学,管理学院/工商管理,理工学院/量子物理".split(",");
-    private static final String[] department_suffix = "策划组,技术组,媒宣组,运营组".split("/");
+    private static final String[] department_suffix = "策划组,技术组,媒宣组,运营组".split(",");
 
     public static int getNum(int start,int end) {
         return (int)(Math.random()*(end-start+1)+start);
@@ -116,10 +116,12 @@ public class RandomValue {
     }
 
     public static void main(String[] args) {
-//        for (int i = 0; i < 100; i++) {
-//
-//             System.out.println(getAddress());
-//        }
+        for (int i = 0; i < 100; i++) {
+            if (i % 7 == 0) {
+                System.out.println(i);
+                System.out.println(getAddress());
+            }
+        }
         Map<String, Object> valueMap = getAddress();
         System.out.println(valueMap);
         // System.out.println(valueMap.get("name").getClass());

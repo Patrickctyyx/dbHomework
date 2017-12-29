@@ -48,7 +48,7 @@ public class ClubController {
 
         if (club == null) {
             clubMap.put("status", "error");
-            clubMap.put("message", "application not found!");
+            clubMap.put("message", "club not found!");
             return clubMap;
         }
 

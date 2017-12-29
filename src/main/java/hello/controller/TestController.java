@@ -45,7 +45,7 @@ public class TestController {
             Map<String, Object> valueMap = RandomValue.getAddress();
             UserEntity user = new UserEntity();
             user.setName(valueMap.get("name").toString());
-            if (i / 7 == 0) {
+            if (i % 7 == 0) {
                 user.setGrade("大二");
                 user.setUserIdentity("minister");
             }
@@ -58,8 +58,9 @@ public class TestController {
             user.setPhone(valueMap.get("tel").toString());
             user.setQq(valueMap.get("tel").toString());
             user.setWechat(valueMap.get("tel").toString());
+            user.setWxID(valueMap.get("tel").toString());
             user.setEmail(valueMap.get("email").toString());
-            user.setIntroduction(valueMap.get("name").toString());
+            user.setIntroduction("我是来自" + valueMap.get("college").toString() + valueMap.get("major").toString() + "的" + valueMap.get("name").toString() + "。");
             userRepository.save(user);
         }
 
