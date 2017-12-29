@@ -1,4 +1,4 @@
-package hello;
+package hello.utils;
 
 import java.security.SecureRandom;
 import java.util.Date;

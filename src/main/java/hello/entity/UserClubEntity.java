@@ -14,8 +14,8 @@ public class UserClubEntity {
 
     @ManyToOne
     private UserEntity user;
-
     private String userIdentity = "officer";
+    private String department;
 
     public Long getId() {
         return id;
@@ -43,5 +43,13 @@ public class UserClubEntity {
 
     public void setUserIdentity(String userIdentity) {
         this.userIdentity = userIdentity;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
     }
 }

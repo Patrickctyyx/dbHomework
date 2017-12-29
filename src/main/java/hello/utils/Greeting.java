@@ -1,4 +1,4 @@
-package hello;
+package hello.utils;
 
 // 用来表示返回的 JSON 对象
 public class Greeting {
