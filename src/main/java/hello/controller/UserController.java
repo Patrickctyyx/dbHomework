@@ -2,14 +2,14 @@ package hello.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import hello.entity.ClubEntity;
+import hello.entity.UserClubEntity;
 import hello.entity.UserEntity;
 import hello.service.ClubRepository;
 import hello.service.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 
 @RestController
@@ -74,8 +74,15 @@ public class UserController {
         response.put("wechat", user.getWechat());
         response.put("email", user.getEmail());
         response.put("introduction", user.getIntroduction());
-        // todo: 不知道这里返回的是什么
-        response.put("joined_club", user.getUserClubs());
+        Set<UserClubEntity> clubs = user.getUserClubs();
+        List<Map<String, Object>> clubInfo = new LinkedList<Map<String, Object>>();
+        for (UserClubEntity club: clubs) {
+            Map<String, Object> clubMap = new LinkedHashMap<String, Object>();
+            clubMap.put("name", club.getClub().getName());
+            clubMap.put("club_id", club.getClub().getId());
+            clubInfo.add(clubMap);
+        }
+        response.put("joined_club", clubInfo);
 
         return response;
     }

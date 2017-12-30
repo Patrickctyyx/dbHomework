@@ -25,7 +25,9 @@ public class UserEntity {
     private String grade;
     private String college;
     private String major;
+    // todo: 这个字段其实没什么用，后面再删掉吧
     private String department;
+    // todo: 这个字段其实没什么用，后面再删掉吧
     private String userIdentity = "officer";
     @Column(unique = true)
     private String phone;

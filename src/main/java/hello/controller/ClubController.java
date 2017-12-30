@@ -61,7 +61,7 @@ public class ClubController {
     }
 
     @GetMapping("/activities/{id}")
-    public List<Map<String, Object>> showClubs(@PathVariable Long id) {
+    public List<Map<String, Object>> showActivities(@PathVariable Long id) {
         List<Map<String, Object>> resultList = new LinkedList<Map<String, Object>>();
 
         ClubEntity club = clubRepository.findFirstById(id);
@@ -86,5 +86,22 @@ public class ClubController {
             resultList.add(activityMap);
         }
         return resultList;
+    }
+
+    @GetMapping("/activities/single/{activity_id}")
+    public Map<String, Object> showTheActivity(@PathVariable Long activity_id) {
+
+        ActivityEntity activity = activityRepository.findFirstById(activity_id);
+
+        Map<String, Object> activityMap = new LinkedHashMap<String, Object>();
+        activityMap.put("id", activity.getId());
+        activityMap.put("theme", activity.getTheme());
+        activityMap.put("content", activity.getContent());
+        activityMap.put("start_time", activity.getStart_time());
+        activityMap.put("creator_id", activity.getUser().getId());
+        activityMap.put("club_id", activity.getClub().getId());
+        activityMap.put("last_modified", activity.getLastModified());
+
+        return activityMap;
     }
 }

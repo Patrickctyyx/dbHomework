@@ -1,5 +1,6 @@
 package hello.utils;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,6 +99,15 @@ public class RandomValue {
         return first+second+third;
     }
 
+    public static String getClassRoom() {
+        String room = "N";
+        room += String.valueOf(getNum(1, 5));
+        room += String.valueOf(getNum(1, 2));
+        room += String.valueOf(getNum(0, 9));
+        return room;
+    }
+
+
     /**
      * 数据封装 
      * @return
@@ -117,13 +127,14 @@ public class RandomValue {
 
     public static void main(String[] args) {
         for (int i = 0; i < 100; i++) {
-            if (i % 7 == 0) {
-                System.out.println(i);
-                System.out.println(getAddress());
-            }
+//            if (i % 7 == 0) {
+//                System.out.println(i);
+//                System.out.println(getAddress());
+//            }
+            System.out.println(getClassRoom());
         }
-        Map<String, Object> valueMap = getAddress();
-        System.out.println(valueMap);
-        // System.out.println(valueMap.get("name").getClass());
+//        Map<String, Object> valueMap = getAddress();
+//        System.out.println(valueMap);
+//        System.out.println(new Date());
     }
 }

@@ -86,10 +86,10 @@ public class ApplicationController {
         return response;
     }
 
-    @GetMapping("/applications/{club_name}")
-    public List<Map<String, Object>> showApplies(@PathVariable String club_name) {
+    @GetMapping("/applications/club/{club_id}")
+    public List<Map<String, Object>> showApplies(@PathVariable Long club_id) {
         List<Map<String, Object>> resultList = new LinkedList<Map<String, Object>>();
-        ClubEntity club = clubRepository.findFirstByName(club_name);
+        ClubEntity club = clubRepository.findFirstById(club_id);
         if (club == null) {
             return resultList;
         }
@@ -113,7 +113,7 @@ public class ApplicationController {
         return resultList;
     }
 
-    @GetMapping("/applications/{id}")
+    @GetMapping("/applications/id/{id}")
     public Map<String, Object> getApply(@PathVariable Long id) {
         ApplicationEntity apply = applicationRepository.findFirstById(id);
         Map<String, Object> applyMap = new LinkedHashMap<String, Object>();
