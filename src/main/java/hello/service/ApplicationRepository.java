@@ -14,4 +14,5 @@ public interface ApplicationRepository extends CrudRepository<ApplicationEntity,
     List<ApplicationEntity> findByClub(ClubEntity club);
     List<ApplicationEntity> findByClubOrderByCredAtDesc(ClubEntity club);
     List<ApplicationEntity> findAllByOrderByCredAtDesc();
+    List<ApplicationEntity> findByPhoneOrderByCredAtDesc(String phone);
 }

@@ -1,9 +1,11 @@
 package hello.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import hello.entity.ApplicationEntity;
 import hello.entity.ClubEntity;
 import hello.entity.UserClubEntity;
 import hello.entity.UserEntity;
+import hello.service.ApplicationRepository;
 import hello.service.ClubRepository;
 import hello.service.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ public class UserController {
     private UserRepository userRepository;
     @Autowired
     private ClubRepository clubRepository;
+    @Autowired
+    private ApplicationRepository applicationRepository;
 
     @PostMapping("/new_user")
     public Map<String, Object> newUser(@RequestBody JSONObject userJSON) {
@@ -110,25 +114,31 @@ public class UserController {
         user.setDepartment(userinfoJSON.getString("college"));
         user.setGrade(userinfoJSON.getString("grade"));
         user.setMajor(userinfoJSON.getString("major"));
-        if (userRepository.findFirstByEmail(userinfoJSON.getString("email")) != null) {
+        if (userRepository.findFirstByEmail(userinfoJSON.getString("email")) != null &&
+                !userRepository.findFirstByEmail(userinfoJSON.getString("email")).getId().equals(user.getId())
+                ) {
             response.put("status", "error");
             response.put("message", "duplicate email!");
             return response;
         }
         user.setEmail(userinfoJSON.getString("email"));
-        if (userRepository.findFirstByQq(userinfoJSON.getString("qq")) != null) {
+        if (userRepository.findFirstByQq(userinfoJSON.getString("qq")) != null &&
+                !userRepository.findFirstByQq(userinfoJSON.getString("qq")).getId().equals(user.getId())
+                ) {
             response.put("status", "error");
             response.put("message", "duplicate qq!");
             return response;
         }
         user.setQq(userinfoJSON.getString("qq"));
-        if (userRepository.findFirstByWechat(userinfoJSON.getString("wechat")) != null) {
+        if (userRepository.findFirstByWechat(userinfoJSON.getString("wechat")) != null &&
+                !userRepository.findFirstByWechat(userinfoJSON.getString("wechat")).getId().equals(user.getId())) {
             response.put("status", "error");
             response.put("message", "duplicate wechat!");
             return response;
         }
         user.setWechat(userinfoJSON.getString("wechat"));
-        if (userRepository.findFirstByPhone(userinfoJSON.getString("phone")) != null) {
+        if (userRepository.findFirstByPhone(userinfoJSON.getString("phone")) != null &&
+                !userRepository.findFirstByPhone(userinfoJSON.getString("phone")).getId().equals(user.getId())) {
             response.put("status", "error");
             response.put("message", "duplicate phone!");
             return response;
@@ -139,6 +149,79 @@ public class UserController {
         userRepository.save(user);
         response.put("status", "success");
         response.put("id", user.getId());
+        return response;
+    }
+
+    // 查看正在申请和没有通过的社团
+    @GetMapping("/user/applied")
+    private Map<String, Object> findAppliedClubs(@RequestParam("token") String token) {
+
+        Map<String, Object> response = new LinkedHashMap<String, Object>();
+
+        if (token == null) {
+            response.put("status", "error");
+            response.put("message", "lacking token!");
+            return response;
+        }
+
+        String wxID = UserEntity.checkAuthToken(token);
+        if (wxID.length() == 0) {
+            response.put("status", "error");
+            response.put("message", "invalid token!");
+            return response;
+        }
+
+        UserEntity user = userRepository.findFirstByWxID(wxID);
+        String phone = user.getPhone();
+
+        List<ApplicationEntity> applications = applicationRepository.findByPhoneOrderByCredAtDesc(phone);
+        if (applications == null) {
+            return response;
+        }
+        List<Long> apply_ids = new LinkedList<Long>();
+        for (ApplicationEntity application: applications) {
+            if (!application.getStatus().equals("accepted")) {
+                apply_ids.add(application.getClub().getId());
+            }
+        }
+        response.put("applied_ids", apply_ids);
+        return response;
+    }
+
+    // 查看申请通过的社团
+    @GetMapping("/user/accepted")
+    private Map<String, Object> findAcceptedClubs(@RequestParam("token") String token) {
+
+        System.out.println(token);
+        Map<String, Object> response = new LinkedHashMap<String, Object>();
+
+        if (token == null) {
+            response.put("status", "error");
+            response.put("message", "lacking token!");
+            return response;
+        }
+
+        String wxID = UserEntity.checkAuthToken(token);
+        if (wxID.length() == 0) {
+            response.put("status", "error");
+            response.put("message", "invalid token!");
+            return response;
+        }
+
+        UserEntity user = userRepository.findFirstByWxID(wxID);
+        String phone = user.getPhone();
+
+        List<ApplicationEntity> applications = applicationRepository.findByPhoneOrderByCredAtDesc(phone);
+        if (applications == null) {
+            return response;
+        }
+        List<Long> apply_ids = new LinkedList<Long>();
+        for (ApplicationEntity application: applications) {
+            if (application.getStatus().equals("accepted")) {
+                apply_ids.add(application.getClub().getId());
+            }
+        }
+        response.put("accepted_ids", apply_ids);
         return response;
     }
 

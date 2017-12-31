@@ -235,7 +235,7 @@ public class UserEntity {
         try {
             SignedJWT signedJWT = SignedJWT.parse(authToken);
             try {
-                JWSVerifier verifier = new MACVerifier(sharedSecret);
+                JWSVerifier verifier = new MACVerifier(getSharedSecret());
                 if (signedJWT.verify(verifier) &&
                         new Date().before(
                                 signedJWT.getJWTClaimsSet().
