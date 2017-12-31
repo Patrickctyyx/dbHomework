@@ -69,10 +69,14 @@ public class ApplicationController {
                 applyJSON.getString("introduction"),
                 club
         );
-        if (applicationRepository.findFirstByPhone(applyJSON.getString("phone")) != null ||
-                applicationRepository.findFirstByEmail(applyJSON.getString("Email")) != null ||
-                userRepository.findFirstByPhone(applyJSON.getString("phone")) != null ||
-                userRepository.findFirstByEmail(applyJSON.getString("email")) != null) {
+        ApplicationEntity oldApplyPhone = applicationRepository.findFirstByPhone(applyJSON.getString("phone"));
+        ApplicationEntity oldApplyEmail = applicationRepository.findFirstByEmail(applyJSON.getString("email"));
+        UserEntity alreadyUser = userRepository.findFirstByPhone(applyJSON.getString("phone"));
+
+        // 已经发送过申请，且申请是对这个社团的，或者原本就是这个社团的不能再发送申请
+        if ((oldApplyPhone != null && oldApplyPhone.getClub().getId().equals(club.getId())) ||
+                (oldApplyEmail != null && oldApplyEmail.getClub().getId().equals(club.getId())) ||
+                (alreadyUser != null && userClubRepository.findFirstByUserAndClub(alreadyUser, club) != null)) {
             response.put("status", "error");
             response.put("message", "information already exists!");
             return response;
@@ -80,7 +84,6 @@ public class ApplicationController {
 
         applicationRepository.save(apply);
         apply = applicationRepository.findFirstByPhone(applyJSON.getString("phone"));
-        System.out.println(apply);
         response.put("status", "success");
         response.put("id", apply.getId());
         return response;
@@ -186,20 +189,23 @@ public class ApplicationController {
             else {
                 apply.setStatus("proved");
 
-                UserEntity newUser = new UserEntity();
-                newUser.setName(apply.getName());
-                newUser.setGrade(apply.getGrade());
-                newUser.setCollege(apply.getCollege());
-                newUser.setMajor(apply.getMajor());
-                newUser.setDepartment(apply.getDepartment());
-                newUser.setPhone(apply.getPhone());
-                newUser.setEmail(apply.getEmail());
-                newUser.setIntroduction(apply.getIntroduction());
-                userRepository.save(newUser);
+                UserEntity newUser = userRepository.findFirstByPhone(apply.getPhone());
+
+                if (newUser == null) {
+                    newUser = new UserEntity();
+                    newUser.setName(apply.getName());
+                    newUser.setGrade(apply.getGrade());
+                    newUser.setCollege(apply.getCollege());
+                    newUser.setMajor(apply.getMajor());
+                    newUser.setDepartment(apply.getDepartment());
+                    newUser.setPhone(apply.getPhone());
+                    newUser.setEmail(apply.getEmail());
+                    newUser.setIntroduction(apply.getIntroduction());
+                    userRepository.save(newUser);
+                }
 
                 UserClubEntity newUserClub = new UserClubEntity();
                 newUserClub.setClub(club);
-                // todo: 不知道这里能不能直接这样得到 id
                 newUserClub.setUser(newUser);
                 userClubRepository.save(newUserClub);
             }
