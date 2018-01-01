@@ -205,4 +205,17 @@ public class TestController {
 
         return new Greeting(1, "created successfully!");
     }
+
+    @GetMapping("/addAdmin")
+    public Greeting addAdmin() {
+        Long id = Long.parseLong(String.valueOf(10002));
+        UserEntity user = userRepository.findFirstById(id);
+        ClubEntity club = clubRepository.findFirstByName("网络技术研讨会");
+        UserClubEntity newInfo = new UserClubEntity();
+        newInfo.setUser(user);
+        newInfo.setClub(club);
+        newInfo.setUserIdentity("minister");
+        userClubRepository.save(newInfo);
+        return new Greeting(1, "created successfully!");
+    }
 }

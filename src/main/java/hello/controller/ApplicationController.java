@@ -177,17 +177,17 @@ public class ApplicationController {
             return response;
         }
 
-        JSONArray resultArray = handleResultJSON.getJSONArray("result");
+        JSONArray resultArray = handleResultJSON.getJSONArray("handle_result");
         // todo:测试的时候试一下能不能用 foreach 来遍历
         for (Iterator iterator = resultArray.iterator(); iterator.hasNext();) {
             JSONObject resultJSON = (JSONObject) iterator.next();
             Long id = resultJSON.getLong("id");
             ApplicationEntity apply = applicationRepository.findFirstById(id);
-            if (resultJSON.getBoolean("result")) {
+            if (!resultJSON.getBoolean("result")) {
                 apply.setStatus("rejected");
             }
             else {
-                apply.setStatus("proved");
+                apply.setStatus("accepted");
 
                 UserEntity newUser = userRepository.findFirstByPhone(apply.getPhone());
 
@@ -200,6 +200,8 @@ public class ApplicationController {
                     newUser.setDepartment(apply.getDepartment());
                     newUser.setPhone(apply.getPhone());
                     newUser.setEmail(apply.getEmail());
+                    newUser.setQq(apply.getId().toString());
+                    newUser.setWechat(apply.getId().toString());
                     newUser.setIntroduction(apply.getIntroduction());
                     userRepository.save(newUser);
                 }
