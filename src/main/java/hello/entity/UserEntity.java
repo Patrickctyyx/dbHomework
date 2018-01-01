@@ -212,7 +212,7 @@ public class UserEntity {
             JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                     .subject(openid)
                     .issuer("patrickcty")
-                    .expirationTime(new Date(new Date().getTime() + 3600 * 1000))
+                    .expirationTime(new Date(new Date().getTime() + 36000 * 1000))
                     .build();
 
             SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
@@ -242,6 +242,8 @@ public class UserEntity {
                                         getExpirationTime()) &&
                         signedJWT.getJWTClaimsSet().getIssuer().equals("patrickcty")
                         ) {
+                    // todo: 这个地方应该更新一下 token 的过期时间，但是没找到怎么做
+                    // => 这个好像不能更新，只能更新 token，因为事件信息是包含在 token 里面的
                     return signedJWT.getJWTClaimsSet().getSubject();
                 }
                 else {

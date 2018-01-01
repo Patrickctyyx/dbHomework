@@ -124,6 +124,11 @@ public class WeChatController {
             response.put("message", "lacking information!");
             return response;
         }
+        if (user.getWxID().equals(curUser.getWxID())) {
+            response.put("status", "error");
+            response.put("message", "account have already been bound!");
+            return response;
+        }
 
         curUser.setWxID(wxID);
         userRepository.delete(curUser);
