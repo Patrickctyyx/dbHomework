@@ -110,6 +110,9 @@ public class UserController {
         }
 
         UserEntity user = userRepository.findFirstByWxID(wxID);
+        if (user.getName() == null) {
+            user.setName(userinfoJSON.getString("name"));
+        }
         user.setCollege(userinfoJSON.getString("college"));
         user.setDepartment(userinfoJSON.getString("college"));
         user.setGrade(userinfoJSON.getString("grade"));
@@ -222,6 +225,25 @@ public class UserController {
             }
         }
         response.put("accepted_ids", apply_ids);
+        return response;
+    }
+
+    @GetMapping("/user/applied/{phone}")
+    private List<Map<String, Object>> findAppliedClubsByPhone(@PathVariable String phone) {
+
+        List<Map<String, Object>> response = new LinkedList<Map<String, Object>>();
+
+        List<ApplicationEntity> applications = applicationRepository.findByPhoneOrderByCredAtDesc(phone);
+        if (applications == null) {
+            return response;
+        }
+        List<Long> apply_ids = new LinkedList<Long>();
+        for (ApplicationEntity application: applications) {
+            Map<String, Object> statusResult = new LinkedHashMap<String, Object>();
+            statusResult.put("club_id", application.getClub().getId());
+            statusResult.put("status", application.getStatus());
+            response.add(statusResult);
+        }
         return response;
     }
 
