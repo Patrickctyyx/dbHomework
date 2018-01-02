@@ -114,7 +114,7 @@ public class UserController {
             user.setName(userinfoJSON.getString("name"));
         }
         user.setCollege(userinfoJSON.getString("college"));
-        user.setDepartment(userinfoJSON.getString("college"));
+        user.setDepartment(userinfoJSON.getString("department"));
         user.setGrade(userinfoJSON.getString("grade"));
         user.setMajor(userinfoJSON.getString("major"));
         if (userRepository.findFirstByEmail(userinfoJSON.getString("email")) != null &&

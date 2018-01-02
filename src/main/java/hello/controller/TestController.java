@@ -15,6 +15,13 @@ import java.util.*;
 
 @RestController
 public class TestController {
+
+    /*
+    * 用来生成基本的数据
+    * 其中最后几个关系部分涉及到了具体表中的内容
+    * 因此直接运行可能会报错
+    */
+
     @Autowired
     private ApplicationRepository applicationRepository;
     @Autowired
@@ -167,6 +174,7 @@ public class TestController {
                 continue;
             }
             ActivityEntity activity = new ActivityEntity();
+            // 像这样的就涉及到了具体的表的内容
             Long id = Long.parseLong(String.valueOf(user.getId() % 5 + 11));
             ClubEntity club = clubRepository.findFirstById(id);
 

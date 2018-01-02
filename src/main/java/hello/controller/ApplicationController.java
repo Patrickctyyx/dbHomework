@@ -44,7 +44,7 @@ public class ApplicationController {
         };
         // 检查是不是有除了介绍之外的信息为空
         for (String attr: attrs) {
-            if (!attr.equals("introduction") && applyJSON.getString(attr) == null) {
+            if (!attr.equals("introduction") && (applyJSON.getString(attr) == null || applyJSON.getString(attr).equals(""))) {
                 response.put("status", "error");
                 response.put("message", "lacking " + attr + "!");
                 return response;

@@ -79,6 +79,7 @@ public class WeChatController {
         Map<String, Object> response = new LinkedHashMap<String, Object>();
         response.put("status", "success");
         response.put("token", token);
+        response.put("id", user.getId());
         return response;
     }
 
