@@ -51,7 +51,7 @@ cty.appSecret=
 
 - [Spring Boot 教程][2]
 - [Hibernate 关系教程][3]
-- 以下省略众多给多很多帮助的教程
+- 以下省略众多给我很多帮助的教程
 
 
 
