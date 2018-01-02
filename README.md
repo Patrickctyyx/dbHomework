@@ -1,9 +1,5 @@
 # 基于 Spring Boot 与 Hibernate 的社团管理系统后台
 
-标签（空格分隔）： 数据库
-
----
-
 ## 说明
 
 这个系统是这学期数据库的大作业内容，本来我之前一直是用 Python + Flask 来写 REST API 的，这学期向挑战一下自己，于是用 Java 写了这个社团管理系统的 API。
@@ -62,4 +58,3 @@ cty.appSecret=
   [1]: https://www.kancloud.cn/chengtianyang/aaa
   [2]: http://tengj.top/categories/Spring-Boot%E5%B9%B2%E8%B4%A7%E7%B3%BB%E5%88%97/page/2/
   [3]: http://www.cnblogs.com/luxh/archive/2012/05/27/2520322.html
-  
