@@ -38,7 +38,6 @@ public class UserController {
                 userJSON.getString("wechat"),
                 userJSON.getString("email")
         );
-        // todo:注意重复数据的问题
         if(userRepository.findFirstByPhone(userJSON.getString("phone")) != null ||
         userRepository.findFirstByEmail(userJSON.getString("email")) != null) {
             response.put("status", "error");

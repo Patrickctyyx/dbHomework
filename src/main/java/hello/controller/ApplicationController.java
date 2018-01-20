@@ -10,6 +10,7 @@ import hello.service.ApplicationRepository;
 import hello.service.ClubRepository;
 import hello.service.UserClubRepository;
 import hello.service.UserRepository;
+import hello.utils.CheckParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,7 +58,16 @@ public class ApplicationController {
             response.put("message", "club do not exists!");
             return response;
         }
-        // todo:对传入进来的参数进行类型检查
+        if (!CheckParams.checkEmail(applyJSON.getString("email"))) {
+            response.put("status", "error");
+            response.put("message", "invalid email format!");
+            return response;
+        }
+        if (!CheckParams.checkEmail(applyJSON.getString("phone"))) {
+            response.put("status", "error");
+            response.put("message", "invalid phone format!");
+            return response;
+        }
         ApplicationEntity apply = new ApplicationEntity(
                 applyJSON.getString("name"),
                 applyJSON.getString("grade"),

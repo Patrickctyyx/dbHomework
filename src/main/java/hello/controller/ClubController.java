@@ -90,10 +90,13 @@ public class ClubController {
 
     @GetMapping("/activities/single/{activity_id}")
     public Map<String, Object> showTheActivity(@PathVariable Long activity_id) {
+        Map<String, Object> activityMap = new LinkedHashMap<String, Object>();
 
         ActivityEntity activity = activityRepository.findFirstById(activity_id);
+        if (activity == null) {
+            return activityMap;
+        }
 
-        Map<String, Object> activityMap = new LinkedHashMap<String, Object>();
         activityMap.put("id", activity.getId());
         activityMap.put("theme", activity.getTheme());
         activityMap.put("content", activity.getContent());
