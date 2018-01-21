@@ -192,7 +192,6 @@ public class ApplicationController {
         }
 
         JSONArray resultArray = handleResultJSON.getJSONArray("handle_result");
-        // todo:测试的时候试一下能不能用 foreach 来遍历
         for (Iterator iterator = resultArray.iterator(); iterator.hasNext();) {
             JSONObject resultJSON = (JSONObject) iterator.next();
             Long id = resultJSON.getLong("id");

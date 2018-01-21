@@ -53,8 +53,7 @@ public class UserEntity {
 
     public UserEntity(
             String name, String grade, String college, String major,
-            String department,String phone,
-            String qq, String wechat, String email
+            String phone, String qq, String wechat, String email
     ) {
         this.name = name;
         this.grade = grade;
