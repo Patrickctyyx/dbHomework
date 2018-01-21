@@ -5,9 +5,7 @@ import hello.service.*;
 import hello.utils.Greeting;
 import hello.utils.RandomValue;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
@@ -44,14 +42,12 @@ public class TestController {
             user.setName(valueMap.get("name").toString());
             if (i % 7 == 0) {
                 user.setGrade("大二");
-                user.setUserIdentity("minister");
             }
             else {
                 user.setGrade("大一");
             }
             user.setCollege(valueMap.get("college").toString());
             user.setMajor(valueMap.get("major").toString());
-            user.setDepartment(valueMap.get("department").toString());
             user.setPhone(valueMap.get("tel").toString());
             user.setQq(valueMap.get("tel").toString());
             user.setWechat(valueMap.get("tel").toString());
@@ -138,8 +134,6 @@ public class TestController {
             ClubEntity club = clubRepository.findFirstById(id);
             userClub.setClub(club);
             userClub.setUser(user);
-            userClub.setDepartment(user.getDepartment());
-            userClub.setUserIdentity(user.getUserIdentity());
             userClubRepository.save(userClub);
         }
 
@@ -150,15 +144,11 @@ public class TestController {
     public Greeting initMoreClubUser() {
         List<UserEntity> allUser = userRepository.findAll();
         for (UserEntity user: allUser) {
-            if (!user.getUserIdentity().equals("minister")) {
-                continue;
-            }
             UserClubEntity userClub = new UserClubEntity();
             Long id = Long.parseLong(String.valueOf((user.getId() + 1) % 5 + 2));
             ClubEntity club = clubRepository.findFirstById(id);
             userClub.setClub(club);
             userClub.setUser(user);
-            userClub.setDepartment(user.getDepartment());
             userClub.setUserIdentity("officer");
             userClubRepository.save(userClub);
         }
@@ -170,9 +160,6 @@ public class TestController {
     public Greeting initActivity() {
         List<UserEntity> allUser = userRepository.findAll();
         for (UserEntity user: allUser) {
-            if (!user.getUserIdentity().equals("minister")) {
-                continue;
-            }
             ActivityEntity activity = new ActivityEntity();
             // 像这样的就涉及到了具体的表的内容
             Long id = Long.parseLong(String.valueOf(user.getId() % 5 + 1));

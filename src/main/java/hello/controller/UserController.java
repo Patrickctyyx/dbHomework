@@ -2,7 +2,6 @@ package hello.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import hello.entity.ApplicationEntity;
-import hello.entity.ClubEntity;
 import hello.entity.UserClubEntity;
 import hello.entity.UserEntity;
 import hello.service.ApplicationRepository;
@@ -83,7 +82,6 @@ public class UserController {
         response.put("grade", user.getGrade());
         response.put("college", user.getCollege());
         response.put("major", user.getMajor());
-        response.put("department", user.getDepartment());
         response.put("phone", user.getPhone());
         response.put("qq", user.getQq());
         response.put("wechat", user.getWechat());
@@ -125,7 +123,6 @@ public class UserController {
             user.setName(userinfoJSON.getString("name"));
         }
         user.setCollege(userinfoJSON.getString("college"));
-        user.setDepartment(userinfoJSON.getString("department"));
         user.setGrade(userinfoJSON.getString("grade"));
         user.setMajor(userinfoJSON.getString("major"));
         if (userRepository.findFirstByEmail(userinfoJSON.getString("email")) != null &&

@@ -8,9 +8,7 @@ import hello.entity.UserClubEntity;
 import hello.entity.UserEntity;
 import hello.service.*;
 import hello.utils.CheckParams;
-import javafx.application.Application;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -213,7 +211,6 @@ public class ApplicationController {
                     newUser.setGrade(apply.getGrade());
                     newUser.setCollege(apply.getCollege());
                     newUser.setMajor(apply.getMajor());
-                    newUser.setDepartment(apply.getDepartment());
                     newUser.setPhone(apply.getPhone());
                     newUser.setEmail(apply.getEmail());
                     newUser.setQq(apply.getId().toString());

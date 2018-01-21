@@ -25,10 +25,6 @@ public class UserEntity {
     private String grade;
     private String college;
     private String major;
-    // todo: 这个字段其实没什么用，后面再删掉吧
-    private String department;
-    // todo: 这个字段其实没什么用，后面再删掉吧
-    private String userIdentity = "officer";
     @Column(unique = true)
     private String phone;
     @Column(unique = true)
@@ -64,7 +60,6 @@ public class UserEntity {
         this.grade = grade;
         this.college = college;
         this.major = major;
-        this.department = department;
         this.phone = phone;
         this.qq = qq;
         this.wechat = wechat;
@@ -105,22 +100,6 @@ public class UserEntity {
 
     public void setMajor(String major) {
         this.major = major;
-    }
-
-    public String getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
-    }
-
-    public String getUserIdentity() {
-        return userIdentity;
-    }
-
-    public void setUserIdentity(String userIdentity) {
-        this.userIdentity = userIdentity;
     }
 
     public String getPhone() {
@@ -221,12 +200,11 @@ public class UserEntity {
             try {
                 signedJWT.sign(signer);
             } catch (JOSEException e) {
-                // todo:把这些都替换为 logger
-                System.out.println(e);
+                e.printStackTrace();
             }
             return signedJWT.serialize();
         } catch (KeyLengthException e) {
-            System.out.println(e);
+            e.printStackTrace();
             return "";
         }
     }
@@ -250,11 +228,11 @@ public class UserEntity {
                     return "";
                 }
             } catch (JOSEException e) {
-                System.out.println(e);
+                e.printStackTrace();
                 return "";
             }
         } catch (ParseException e) {
-            System.out.println(e);
+            e.printStackTrace();
             return "";
         }
     }
