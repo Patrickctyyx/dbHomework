@@ -63,7 +63,7 @@ public class ApplicationController {
             response.put("message", "invalid email format!");
             return response;
         }
-        if (!CheckParams.checkEmail(applyJSON.getString("phone"))) {
+        if (!CheckParams.checkPhone(applyJSON.getString("phone"))) {
             response.put("status", "error");
             response.put("message", "invalid phone format!");
             return response;

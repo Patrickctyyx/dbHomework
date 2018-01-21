@@ -8,6 +8,7 @@ import hello.entity.UserEntity;
 import hello.service.ApplicationRepository;
 import hello.service.ClubRepository;
 import hello.service.UserRepository;
+import hello.utils.CheckParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,17 @@ public class UserController {
     @PostMapping("/new_user")
     public Map<String, Object> newUser(@RequestBody JSONObject userJSON) {
         Map<String, Object> response = new LinkedHashMap<String, Object>();
+
+        if (!CheckParams.checkEmail(userJSON.getString("email"))) {
+            response.put("status", "error");
+            response.put("message", "invalid email format!");
+            return response;
+        }
+        if (!CheckParams.checkPhone(userJSON.getString("phone"))) {
+            response.put("status", "error");
+            response.put("message", "invalid phone format!");
+            return response;
+        }
 
         UserEntity user = new UserEntity(
                 userJSON.getString("name"),
@@ -123,6 +135,11 @@ public class UserController {
             response.put("message", "duplicate email!");
             return response;
         }
+        if (!CheckParams.checkEmail(userinfoJSON.getString("email"))) {
+            response.put("status", "error");
+            response.put("message", "invalid email format!");
+            return response;
+        }
         user.setEmail(userinfoJSON.getString("email"));
         if (userRepository.findFirstByQq(userinfoJSON.getString("qq")) != null &&
                 !userRepository.findFirstByQq(userinfoJSON.getString("qq")).getId().equals(user.getId())
@@ -143,6 +160,11 @@ public class UserController {
                 !userRepository.findFirstByPhone(userinfoJSON.getString("phone")).getId().equals(user.getId())) {
             response.put("status", "error");
             response.put("message", "duplicate phone!");
+            return response;
+        }
+        if (!CheckParams.checkPhone(userinfoJSON.getString("phone"))) {
+            response.put("status", "error");
+            response.put("message", "invalid phone format!");
             return response;
         }
         user.setPhone(userinfoJSON.getString("phone"));
