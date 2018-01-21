@@ -6,12 +6,14 @@ import hello.entity.ApplicationEntity;
 import hello.entity.ClubEntity;
 import hello.entity.UserClubEntity;
 import hello.entity.UserEntity;
-import hello.service.ApplicationRepository;
-import hello.service.ClubRepository;
-import hello.service.UserClubRepository;
-import hello.service.UserRepository;
+import hello.service.*;
 import hello.utils.CheckParams;
+import javafx.application.Application;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -26,6 +28,8 @@ public class ApplicationController {
     private ClubRepository clubRepository;
     @Autowired
     private UserClubRepository userClubRepository;
+    @Autowired
+    private ApplicationPagingRepository applicationPagingRepository;
 
     @PostMapping("/new_apply")
     public Map<String, Object> newApply(@RequestBody JSONObject applyJSON) {
@@ -99,14 +103,17 @@ public class ApplicationController {
         return response;
     }
 
+
     @GetMapping("/applications/club/{club_id}")
-    public List<Map<String, Object>> showApplies(@PathVariable Long club_id) {
+    public List<Map<String, Object>> showApplies(@PathVariable Long club_id, @RequestParam(value = "page", defaultValue = "0") Integer page) {
         List<Map<String, Object>> resultList = new LinkedList<Map<String, Object>>();
         ClubEntity club = clubRepository.findFirstById(club_id);
         if (club == null) {
             return resultList;
         }
-        List<ApplicationEntity> applications = applicationRepository.findByClubOrderByCredAtDesc(club);
+        Sort sort = new Sort(Sort.Direction.DESC, "credAt");
+        Pageable pageable = new PageRequest(page, 10, sort);
+        List<ApplicationEntity> applications = applicationPagingRepository.findAll(pageable).getContent();
         for (ApplicationEntity apply: applications) {
             Map<String, Object> applyMap = new LinkedHashMap<String, Object>();
             applyMap.put("id", apply.getId());
@@ -122,7 +129,6 @@ public class ApplicationController {
             applyMap.put("cred_at", apply.getCredAt());
             resultList.add(applyMap);
         }
-        // todo: 有时间做一下数据分页
         return resultList;
     }
 
