@@ -106,7 +106,7 @@ public class TestController {
         for (int i = 0; i < 20; i++) {
             Map<String, Object> valueMap = RandomValue.getAddress();
             ApplicationEntity apply = new ApplicationEntity();
-            Long id = Long.parseLong(String.valueOf(i % 5 + 11));
+            Long id = Long.parseLong(String.valueOf(i % 5 + 1));
             ClubEntity club = clubRepository.findFirstById(id);
             apply.setClub(club);
             if (i % 7 == 0) {
@@ -134,7 +134,7 @@ public class TestController {
         List<UserEntity> allUser = userRepository.findAll();
         for (UserEntity user: allUser) {
             UserClubEntity userClub = new UserClubEntity();
-            Long id = Long.parseLong(String.valueOf(user.getId() % 5 + 11));
+            Long id = Long.parseLong(String.valueOf(user.getId() % 5 + 1));
             ClubEntity club = clubRepository.findFirstById(id);
             userClub.setClub(club);
             userClub.setUser(user);
@@ -154,7 +154,7 @@ public class TestController {
                 continue;
             }
             UserClubEntity userClub = new UserClubEntity();
-            Long id = Long.parseLong(String.valueOf((user.getId() + 1) % 5 + 12));
+            Long id = Long.parseLong(String.valueOf((user.getId() + 1) % 5 + 2));
             ClubEntity club = clubRepository.findFirstById(id);
             userClub.setClub(club);
             userClub.setUser(user);
@@ -175,7 +175,7 @@ public class TestController {
             }
             ActivityEntity activity = new ActivityEntity();
             // 像这样的就涉及到了具体的表的内容
-            Long id = Long.parseLong(String.valueOf(user.getId() % 5 + 11));
+            Long id = Long.parseLong(String.valueOf(user.getId() % 5 + 1));
             ClubEntity club = clubRepository.findFirstById(id);
 
             activity.setTheme("例会");
