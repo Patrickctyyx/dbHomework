@@ -43,7 +43,6 @@ public class UserController {
                 userJSON.getString("grade"),
                 userJSON.getString("college"),
                 userJSON.getString("major"),
-                userJSON.getString("department"),
                 userJSON.getString("phone"),
                 userJSON.getString("qq"),
                 userJSON.getString("wechat"),
