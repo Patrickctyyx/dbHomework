@@ -32,7 +32,7 @@ public class ActivityEntity {
     @JoinColumn(name = "club_id")
     private ClubEntity club;
 
-    // todo: 需不需要给活动加上状态？
+    // 需不需要给活动加上状态？
     // => 这个要根据活动的具体含义来判断，现在还没想清楚
 
     public Long getId() {

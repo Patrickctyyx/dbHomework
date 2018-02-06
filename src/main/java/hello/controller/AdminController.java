@@ -102,7 +102,7 @@ public class AdminController {
         }
         revisedUserClub.setUserIdentity(newIdentity);
         userClubRepository.save(revisedUserClub);
-        response.put("status", "ok");
+        response.put("status", "success");
         return response;
     }
 
@@ -157,5 +157,63 @@ public class AdminController {
         return response;
     }
 
-    // todo: 管理员修改活动
+    @PostMapping("/edit_activity")
+    public Map<String, Object> editActivity(@RequestBody JSONObject editJSON) {
+        Map<String, Object> response = new LinkedHashMap<String, Object>();
+
+        Integer status = isAdmin(editJSON);
+
+        if (status == 2) {
+            response.put("status", "error");
+            response.put("message", "lacking token!");
+            return response;
+        }
+
+        if (status == 3) {
+            response.put("status", "error");
+            response.put("message", "invalid token!");
+            return response;
+        }
+
+        if (status == 4) {
+            response.put("status", "error");
+            response.put("message", "permission denied!");
+            return response;
+        }
+
+        if (status == 5) {
+            response.put("status", "error");
+            response.put("message", "club does not exist!");
+            return response;
+        }
+
+        String token = editJSON.getString("token");
+        String wxID = UserEntity.checkAuthToken(token);
+        UserEntity user = userRepository.findFirstByWxID(wxID);
+        Long activityID = editJSON.getLong("activity_id");
+        ActivityEntity activity = activityRepository.findFirstById(activityID);
+
+        if (activity == null) {
+            response.put("status", "error");
+            response.put("message", "activity does not exist!");
+            return response;
+        }
+
+        if (activity.getUser() != user) {
+            response.put("status", "error");
+            response.put("message", "permission denied, not the same admin!");
+            return response;
+        }
+
+        activity.setTheme(editJSON.getString("theme"));
+        activity.setContent(editJSON.getString("content"));
+        activity.setStart_time(editJSON.getTimestamp("start_time"));
+        activity.setTarget_dep(editJSON.getString("target_dep"));
+
+        activityRepository.save(activity);
+
+        response.put("status", "success");
+        response.put("id", activity.getId());
+        return response;
+    }
 }
