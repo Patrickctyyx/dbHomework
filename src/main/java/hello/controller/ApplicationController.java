@@ -83,12 +83,15 @@ public class ApplicationController {
         );
         ApplicationEntity oldApplyPhone = applicationRepository.findFirstByPhone(applyJSON.getString("phone"));
         ApplicationEntity oldApplyEmail = applicationRepository.findFirstByEmail(applyJSON.getString("email"));
-        UserEntity alreadyUser = userRepository.findFirstByPhone(applyJSON.getString("phone"));
+        UserEntity alreadyUserPhone = userRepository.findFirstByPhone(applyJSON.getString("phone"));
+        UserEntity alreadyUserEmail = userRepository.findFirstByEmail(applyJSON.getString("email"));
+
 
         // 已经发送过申请，且申请是对这个社团的，或者原本就是这个社团的不能再发送申请
         if ((oldApplyPhone != null && oldApplyPhone.getClub().getId().equals(club.getId())) ||
                 (oldApplyEmail != null && oldApplyEmail.getClub().getId().equals(club.getId())) ||
-                (alreadyUser != null && userClubRepository.findFirstByUserAndClub(alreadyUser, club) != null)) {
+                (alreadyUserPhone != null && userClubRepository.findFirstByUserAndClub(alreadyUserPhone, club) != null) ||
+                (alreadyUserEmail != null && userClubRepository.findFirstByUserAndClub(alreadyUserEmail, club) != null)) {
             response.put("status", "error");
             response.put("message", "information already exists!");
             return response;

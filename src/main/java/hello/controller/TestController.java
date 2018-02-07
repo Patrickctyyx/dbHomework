@@ -201,7 +201,7 @@ public class TestController {
         return new Greeting(1, "created successfully!");
     }
 
-    @GetMapping("/addAdmin")
+                                            @GetMapping("/addAdmin")
     public Greeting addAdmin() {
         Long id = Long.parseLong(String.valueOf(10002));
         UserEntity user = userRepository.findFirstById(id);
