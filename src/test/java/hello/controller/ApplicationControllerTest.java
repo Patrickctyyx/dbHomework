@@ -234,7 +234,7 @@ public class ApplicationControllerTest {
         ApplicationEntity applicationEntity2 = applicationRepository.findFirstById(Long.parseLong(String.valueOf(11)));
         assertThat(applicationEntity2.getStatus(), equalTo("pending"));
 
-        //
+        // 也会自动创建用户
         UserEntity user1 = userRepository.findFirstByPhone(applicationEntity1.getPhone());
         assertThat(user1, equalTo(null));
         UserEntity user2 = userRepository.findFirstByPhone(applicationEntity2.getPhone());

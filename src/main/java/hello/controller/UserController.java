@@ -76,12 +76,14 @@ public class UserController {
         }
 
         UserEntity user = userRepository.findFirstByWxID(wxID);
+
         if (user.getName() == null) {
             user.setName(userinfoJSON.getString("name"));
         }
         user.setCollege(userinfoJSON.getString("college"));
         user.setGrade(userinfoJSON.getString("grade"));
         user.setMajor(userinfoJSON.getString("major"));
+
         if (userRepository.findFirstByEmail(userinfoJSON.getString("email")) != null &&
                 !userRepository.findFirstByEmail(userinfoJSON.getString("email")).getId().equals(user.getId())
                 ) {
@@ -95,6 +97,7 @@ public class UserController {
             return response;
         }
         user.setEmail(userinfoJSON.getString("email"));
+
         if (userRepository.findFirstByQq(userinfoJSON.getString("qq")) != null &&
                 !userRepository.findFirstByQq(userinfoJSON.getString("qq")).getId().equals(user.getId())
                 ) {
@@ -103,6 +106,7 @@ public class UserController {
             return response;
         }
         user.setQq(userinfoJSON.getString("qq"));
+
         if (userRepository.findFirstByWechat(userinfoJSON.getString("wechat")) != null &&
                 !userRepository.findFirstByWechat(userinfoJSON.getString("wechat")).getId().equals(user.getId())) {
             response.put("status", "error");
@@ -110,6 +114,7 @@ public class UserController {
             return response;
         }
         user.setWechat(userinfoJSON.getString("wechat"));
+
         if (userRepository.findFirstByPhone(userinfoJSON.getString("phone")) != null &&
                 !userRepository.findFirstByPhone(userinfoJSON.getString("phone")).getId().equals(user.getId())) {
             response.put("status", "error");
@@ -122,6 +127,7 @@ public class UserController {
             return response;
         }
         user.setPhone(userinfoJSON.getString("phone"));
+
         user.setIntroduction(userinfoJSON.getString("introduction"));
 
         userRepository.save(user);
