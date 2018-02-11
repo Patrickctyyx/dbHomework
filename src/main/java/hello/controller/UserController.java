@@ -23,48 +23,6 @@ public class UserController {
     @Autowired
     private ApplicationRepository applicationRepository;
 
-    @PostMapping("/new_user")
-    public Map<String, Object> newUser(@RequestBody JSONObject userJSON) {
-        Map<String, Object> response = new LinkedHashMap<String, Object>();
-
-        if (!CheckParams.checkEmail(userJSON.getString("email"))) {
-            response.put("status", "error");
-            response.put("message", "invalid email format!");
-            return response;
-        }
-        if (!CheckParams.checkPhone(userJSON.getString("phone"))) {
-            response.put("status", "error");
-            response.put("message", "invalid phone format!");
-            return response;
-        }
-
-        UserEntity user = new UserEntity(
-                userJSON.getString("name"),
-                userJSON.getString("grade"),
-                userJSON.getString("college"),
-                userJSON.getString("major"),
-                userJSON.getString("phone"),
-                userJSON.getString("qq"),
-                userJSON.getString("wechat"),
-                userJSON.getString("email")
-        );
-        if(userRepository.findFirstByPhone(userJSON.getString("phone")) != null ||
-        userRepository.findFirstByEmail(userJSON.getString("email")) != null) {
-            response.put("status", "error");
-            response.put("message", "information already exists!");
-            return response;
-        }
-        userRepository.save(user);
-
-        // user = userRepository.findFirstByPhone(userJSON.getString("phone"));
-
-
-        response.put("status", "success");
-        response.put("message", "Create successfully!");
-        response.put("id", user.getId());
-        return response;
-    }
-
     @GetMapping("/userinfo/{id}")
     public Map<String, Object> getUserinfo(@PathVariable Long id) {
         Map<String, Object> response = new LinkedHashMap<String, Object>();

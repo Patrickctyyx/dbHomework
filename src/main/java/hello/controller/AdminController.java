@@ -3,15 +3,19 @@ package hello.controller;
 import com.alibaba.fastjson.JSONObject;
 import hello.entity.*;
 import hello.service.*;
+import hello.utils.CheckParams;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/admin")
 public class AdminController {
     @Autowired
     private UserRepository userRepository;
@@ -22,64 +26,54 @@ public class AdminController {
     @Autowired
     private ActivityRepository activityRepository;
 
-    private Integer isAdmin(JSONObject paramJSON) {
-        String token = paramJSON.getString("token");
-        if (token == null) {
-            return 2;
-        }
-
-        String wxID = UserEntity.checkAuthToken(token);
-        if (wxID.length() == 0) {
-            return 3;
-        }
-
-        Long clubID = paramJSON.getLong("club_id");
-        if (clubID == null) {
-            return 5;
-        }
-
-        UserEntity user = userRepository.findFirstByWxID(wxID);
-        ClubEntity club = clubRepository.findFirstById(clubID);
-        if (user == null || club == null) {
-            return 4;
-        }
-        UserClubEntity userClub = userClubRepository.findFirstByUserAndClub(
-                user, club
-        );
-        if (userClub.getUserIdentity().equals("officer")) {
-            return 4;
-        }
-
-        return 1;
-    }
-
-    @PostMapping("/revise_identity")
-    public Map<String, Object> reviseIdentity(@RequestBody JSONObject reviseJSON) {
+    private Map<String, Object> isAdmin(JSONObject paramJSON) {
         Map<String, Object> response = new LinkedHashMap<String, Object>();
 
-        Integer status = isAdmin(reviseJSON);
-
-        if (status == 2) {
+        String token = paramJSON.getString("token");
+        if (token == null) {
             response.put("status", "error");
             response.put("message", "lacking token!");
             return response;
         }
 
-        if (status == 3) {
+        String wxID = UserEntity.checkAuthToken(token);
+        if (wxID.length() == 0) {
             response.put("status", "error");
             response.put("message", "invalid token!");
             return response;
         }
 
-        if (status == 4) {
+        Long clubID = paramJSON.getLong("club_id");
+        if (clubID == null) {
+            response.put("status", "error");
+            response.put("message", "club does not exist!");
+            return response;
+        }
+
+        UserEntity user = userRepository.findFirstByWxID(wxID);
+        ClubEntity club = clubRepository.findFirstById(clubID);
+        if (user == null || club == null) {
+            response.put("status", "error");
+            response.put("message", "permission denied!");
+            return response;
+        }
+        UserClubEntity userClub = userClubRepository.findFirstByUserAndClub(
+                user, club
+        );
+        if (userClub.getUserIdentity().equals("officer")) {
             response.put("status", "error");
             response.put("message", "permission denied!");
             return response;
         }
 
-        if (status == 5) {
-            response.put("status", "error");
-            response.put("message", "club does not exist!");
+        response.put("status", "success");
+        return response;
+    }
+
+    @PostMapping("/revise_identity")
+    public Map<String, Object> reviseIdentity(@RequestBody JSONObject reviseJSON) {
+        Map<String, Object> response = isAdmin(reviseJSON);
+        if (response.get("status").equals("error")) {
             return response;
         }
 
@@ -108,31 +102,8 @@ public class AdminController {
 
     @PostMapping("/new_activity")
     public Map<String, Object> newActivity(@RequestBody JSONObject activityJSON) {
-        Map<String, Object> response = new LinkedHashMap<String, Object>();
-
-        Integer status = isAdmin(activityJSON);
-
-        if (status == 2) {
-            response.put("status", "error");
-            response.put("message", "lacking token!");
-            return response;
-        }
-
-        if (status == 3) {
-            response.put("status", "error");
-            response.put("message", "invalid token!");
-            return response;
-        }
-
-        if (status == 4) {
-            response.put("status", "error");
-            response.put("message", "permission denied!");
-            return response;
-        }
-
-        if (status == 5) {
-            response.put("status", "error");
-            response.put("message", "club does not exist!");
+        Map<String, Object> response =  isAdmin(activityJSON);
+        if (response.get("status").equals("error")) {
             return response;
         }
 
@@ -159,31 +130,8 @@ public class AdminController {
 
     @PostMapping("/edit_activity")
     public Map<String, Object> editActivity(@RequestBody JSONObject editJSON) {
-        Map<String, Object> response = new LinkedHashMap<String, Object>();
-
-        Integer status = isAdmin(editJSON);
-
-        if (status == 2) {
-            response.put("status", "error");
-            response.put("message", "lacking token!");
-            return response;
-        }
-
-        if (status == 3) {
-            response.put("status", "error");
-            response.put("message", "invalid token!");
-            return response;
-        }
-
-        if (status == 4) {
-            response.put("status", "error");
-            response.put("message", "permission denied!");
-            return response;
-        }
-
-        if (status == 5) {
-            response.put("status", "error");
-            response.put("message", "club does not exist!");
+        Map<String, Object> response = isAdmin(editJSON);
+        if (response.get("status").equals("error")) {
             return response;
         }
 
@@ -214,6 +162,66 @@ public class AdminController {
 
         response.put("status", "success");
         response.put("id", activity.getId());
+        return response;
+    }
+
+    // 管理员创建新用户并将其加到特定社团
+    @PostMapping("/new_user")
+    public Map<String, Object> newUser(@RequestBody JSONObject userJSON) {
+        Map<String, Object> response = isAdmin(userJSON);
+        if (response.get("status").equals("error")) {
+            return response;
+        }
+
+        UserEntity user = userRepository.findFirstByEmail(userJSON.getString("email"));
+        ClubEntity club = clubRepository.findFirstById(userJSON.getLong("club"));
+        if (user != null) {
+            if (userClubRepository.findFirstByUserAndClub(user, club) != null) {
+                response.put("status", "error");
+                response.put("message", "user is already in your club!");
+                return response;
+            }
+        }
+
+        else {
+            if (!CheckParams.checkEmail(userJSON.getString("email"))) {
+                response.put("status", "error");
+                response.put("message", "invalid email format!");
+                return response;
+            }
+            if (!CheckParams.checkPhone(userJSON.getString("phone"))) {
+                response.put("status", "error");
+                response.put("message", "invalid phone format!");
+                return response;
+            }
+
+            user = new UserEntity(
+                    userJSON.getString("name"),
+                    userJSON.getString("grade"),
+                    userJSON.getString("college"),
+                    userJSON.getString("major"),
+                    userJSON.getString("phone"),
+                    userJSON.getString("qq"),
+                    userJSON.getString("wechat"),
+                    userJSON.getString("email")
+            );
+            if(userRepository.findFirstByPhone(userJSON.getString("phone")) != null ||
+                    userRepository.findFirstByEmail(userJSON.getString("email")) != null) {
+                response.put("status", "error");
+                response.put("message", "information already exists!");
+                return response;
+            }
+            userRepository.save(user);
+        }
+
+        UserClubEntity userClub = new UserClubEntity();
+        userClub.setUser(user);
+        userClub.setClub(club);
+        userClubRepository.save(userClub);
+
+        response.put("status", "success");
+        response.put("message", "Create successfully!");
+        response.put("id", user.getId());
         return response;
     }
 }
