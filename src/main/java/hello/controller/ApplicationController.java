@@ -188,7 +188,7 @@ public class ApplicationController {
         UserClubEntity userClub = userClubRepository.findFirstByUserAndClub(
                 user, club
         );
-        if (userClub.getUserIdentity().equals("officer")) {
+        if (userClub != null && userClub.getUserIdentity().equals("officer")) {
             response.put("status", "error");
             response.put("message", "permission denied!");
             return response;
